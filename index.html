@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart-Irrigation Network Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Smart Irrigation</h2>
+                <p>Network Management</p>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-module="dashboard">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </button>
+                <button class="nav-btn" data-module="insert-sensor">
+                    <span class="icon">➕</span>
+                    Insert Sensor
+                </button>
+                <button class="nav-btn" data-module="sensor-registry">
+                    <span class="icon">📋</span>
+                    Sensor Registry
+                </button>
+                <button class="nav-btn" data-module="optimize-network">
+                    <span class="icon">🔗</span>
+                    Optimize Pipe Network
+                </button>
+                <button class="nav-btn" data-module="irrigation-scheduler">
+                    <span class="icon">💧</span>
+                    Irrigation Scheduler
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn-reset" id="resetBtn">🔄 Reset Data</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h1>Smart-Irrigation Network</h1>
+                <div class="header-info">
+                    <span id="sensorCount">Sensors: 0</span>
+                    <span id="systemStatus">Status: Ready</span>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Dashboard Module -->
+                <section id="dashboard" class="module active">
+                    <div class="module-header">
+                        <h2>📊 Dashboard</h2>
+                        <p>Overview of Smart-Irrigation System</p>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">🌱</div>
+                            <div class="stat-content">
+                                <h3>Total Sensors</h3>
+                                <p class="stat-value" id="dashSensorCount">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💧</div>
+                            <div class="stat-content">
+                                <h3>Avg Moisture</h3>
+                                <p class="stat-value" id="dashAvgMoisture">0%</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🔴</div>
+                            <div class="stat-content">
+                                <h3>Critical Sensors</h3>
+                                <p class="stat-value" id="dashCritical">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🌳</div>
+                            <div class="stat-content">
+                                <h3>Network MST Cost</h3>
+                                <p class="stat-value" id="dashMSTCost">--</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-info">
+                        <div class="info-box">
+                            <h3>Project Overview</h3>
+                            <p>This system manages sensor networks for smart irrigation using advanced data structures:</p>
+                            <ul>
+                                <li><strong>AVL Tree:</strong> Maintains sensor registry sorted by ID with O(log n) operations</li>
+                                <li><strong>Max-Heap:</strong> Prioritizes irrigation based on soil dryness</li>
+                                <li><strong>Graph (MST):</strong> Optimizes pipe network using Kruskal's algorithm</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Insert Sensor Module -->
+                <section id="insert-sensor" class="module">
+                    <div class="module-header">
+                        <h2>➕ Insert New Sensor</h2>
+                        <p>Add a new sensor to the network</p>
+                    </div>
+                    <form class="sensor-form">
+                        <div class="form-group">
+                            <label for="sensorId">Sensor ID *</label>
+                            <input type="number" id="sensorId" placeholder="Enter unique sensor ID" required min="1">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sensorX">X Coordinate *</label>
+                                <input type="number" id="sensorX" placeholder="X position" required min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="sensorY">Y Coordinate *</label>
+                                <input type="number" id="sensorY" placeholder="Y position" required min="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="sensorMoisture">Moisture Level (0-100%) *</label>
+                            <input type="number" id="sensorMoisture" placeholder="Enter moisture %" required min="0" max="100">
+                            <div class="moisture-indicator">
+                                <div class="moisture-bar" id="moistureBar"></div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">✓ Insert Sensor</button>
+                            <button type="reset" class="btn-secondary">✕ Clear Form</button>
+                        </div>
+                    </form>
+                    <div id="insertMessage" class="message"></div>
+                </section>
+
+                <!-- Sensor Registry Module -->
+                <section id="sensor-registry" class="module">
+                    <div class="module-header">
+                        <h2>📋 Sensor Registry (AVL Tree)</h2>
+                        <p>All sensors sorted by ID in binary search tree structure</p>
+                    </div>
+                    <div class="registry-controls">
+                        <input type="text" id="searchSensorId" placeholder="Search by Sensor ID..." class="search-input">
+                        <button id="searchBtn" class="btn-secondary">🔍 Search</button>
+                        <button id="clearSearchBtn" class="btn-secondary">Clear</button>
+                    </div>
+                    
+                    <!-- AVL Tree Visualization -->
+                    <div class="visualization-container">
+                        <h3 style="color: #2ecc71; margin-bottom: 15px; text-align: center;">🌳 AVL Tree Structure</h3>
+                        <div class="tree-canvas-wrapper">
+                            <canvas id="avlTreeCanvas" class="tree-canvas"></canvas>
+                        </div>
+                        <div id="treeStats" style="text-align: center; color: var(--text-secondary); margin-top: 15px; font-size: 0.9rem;">
+                            <p>Tree Height: <strong id="treeHeight">0</strong> | Total Nodes: <strong id="totalNodes">0</strong> | Balanced: <strong id="isBalanced">✓</strong></p>
+                        </div>
+                    </div>
+
+                    <hr style="border: none; border-top: 2px solid var(--border-color); margin: 25px 0;">
+
+                    <!-- Sensor List -->
+                    <div id="registryContainer" class="registry-container">
+                        <p class="empty-message">No sensors available. Insert sensors to populate the registry.</p>
+                    </div>
+                </section>
+
+                <!-- Optimize Network Module -->
+                <section id="optimize-network" class="module">
+                    <div class="module-header">
+                        <h2>🔗 Optimize Pipe Network (MST)</h2>
+                        <p>Find minimum spanning tree using Kruskal's Algorithm</p>
+                    </div>
+                    <div class="network-controls">
+                        <button id="calculateMSTBtn" class="btn-primary">🔄 Calculate MST</button>
+                        <button id="viewMSTVisualsBtn" class="btn-secondary">📊 View Details</button>
+                    </div>
+
+                    <!-- MST Graph Visualization -->
+                    <div class="visualization-container">
+                        <h3 style="color: #3498db; margin-bottom: 15px; text-align: center;">📡 Minimum Spanning Tree Network</h3>
+                        <div class="mst-canvas-wrapper">
+                            <canvas id="mstCanvas" class="mst-canvas"></canvas>
+                        </div>
+                        <div id="mstStatsViz" style="text-align: center; color: var(--text-secondary); margin-top: 15px; font-size: 0.9rem;">
+                            <p>Total Edges: <strong id="vizEdgeCount">0</strong> | Total Cost: <strong id="vizTotalCost">0</strong> | Status: <strong id="vizNetworkStatus">Ready</strong></p>
+                        </div>
+                    </div>
+
+                    <hr style="border: none; border-top: 2px solid var(--border-color); margin: 25px 0;">
+
+                    <!-- MST Details -->
+                    <div id="mstContainer" class="mst-container">
+                        <p class="empty-message">No MST calculated yet. Click "Calculate MST" to optimize the network.</p>
+                    </div>
+                </section>
+
+                <!-- Irrigation Scheduler Module -->
+                <section id="irrigation-scheduler" class="module">
+                    <div class="module-header">
+                        <h2>💧 Irrigation Scheduler (Max-Heap)</h2>
+                        <p>Priority-based irrigation queue based on soil dryness</p>
+                    </div>
+                    <div class="scheduler-controls">
+                        <button id="updateQueueBtn" class="btn-primary">🔄 Update Queue</button>
+                        <button id="simulateIrrigationBtn" class="btn-secondary">▶️ Simulate Irrigation</button>
+                    </div>
+                    <div id="priorityQueueContainer" class="priority-queue-container">
+                        <p class="empty-message">No irrigation queue. Insert sensors to populate the schedule.</p>
+                    </div>
+                    <div id="irrigationLog" class="irrigation-log"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
